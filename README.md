@@ -99,3 +99,25 @@ ec2_instance_type = "t3.micro"
 instance_name = "instance_name=MyNewEC2Name"
 ```
 
+### Create Outputs
+
+Outputs are used to expose some data for a pipeline or other. For example imagine you want to output some IP adress so that the pipeline can ping it or whatever.
+
+output.tf
+```
+output "instance_id" {
+  description = "ID of the EC2 instance"
+  value = aws_instance.app_server.id
+}
+
+output "instance_public_ip" {
+  description = "value of the instance public ip"
+  value = aws_instance.app_server.public_ip
+}
+```
+
+We are accessing our resource by it's type and name and then some internal values (that we can find on each provider resource documentation).
+
+We can see the output values once we run `terraform apply`
+
+If we want to see them before actually apllying them we can run `terraform output`
