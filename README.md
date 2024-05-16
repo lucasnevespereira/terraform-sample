@@ -58,3 +58,44 @@ Once the changes are made, it will generate a terraform state file `terraform.tf
 
 
 To delete all resources we run `terraform destroy`. To delete a signle resource we remove it from the code and we run `terraform apply`
+
+### Create Variables
+
+Now that we have our resources, the values in it are hard-coded, imagine having a lot of resources and need to change some value in all of them. This is not good for scale, so we can create variables.
+
+```
+variable "instance_name" {
+  description = "Value of the name tag for the EC2 instance"
+  type        = string
+  default = "MyNewInstance"
+}
+
+variable "ec2_instance_type" {
+  description = "AWS EC2 instance type"
+  type        = string
+  default = "t2.micro"
+}
+```
+
+And now to use them we can use the keyword `var`
+
+```
+resource "aws_instance" "app_server" {
+  ami = "ami-0c55b159cbfafe1f0"
+  instance_type = var.ec2_instance_type
+  tags = {
+    Name = var.instance_name
+  }
+}
+```
+
+This will use the value in `default` field. If we want we can change it when we run terraform apply `terraform apply -var "instance_name=MyNewEC2Name"`, this will override the default.
+
+If we want to override multiple variables, instead of doing it with terraform apply, we can also create a file `terraform.tfvars` that will contain the values to override.
+
+terraform.tfvars
+```
+ec2_instance_type = "t3.micro"
+instance_name = "instance_name=MyNewEC2Name"
+```
+
